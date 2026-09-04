@@ -11,7 +11,7 @@
 
 ## 2. إعداد بيئة التطوير المحلية
 ```bash
-git clone https://github.com/org/email-service-platform.git
+git clone https://github.com/omarabohassangoo-prog/email-service-platform.git
 cd email-service-platform
 cp .env.example .env
 pnpm install
