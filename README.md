@@ -4,6 +4,10 @@
 [![CI/CD Pipeline](https://github.com/omarabohassangoo-prog/email-service-platform/actions/workflows/deploy.yml/badge.svg)](https://github.com/omarabohassangoo-prog/email-service-platform/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+> **حالة الإنشاء والاتصال المستمر (CI/CD Status):** 
+> - ✅ **Pipeline #2:** `576f557` (feat: initialize ESP platform project) — ناجح (20s على `main`)
+> - ✅ **Pipeline #1:** `2c3c323` — ناجح (17s على `main`)
+
 منصة بريد إلكتروني مؤسسية مركزية وعالية الأداء مصممة لإدارة الحملات البريدية، الطوابير الذكية، الإشعارات الفورية، وتتبع تسليم الرسائل عبر واجهات برمجة تطبيقات (API) قوية لوحة تحكم متكاملة للمسؤولين.
 
 ---
@@ -60,10 +64,21 @@ pnpm build      # بناء المشروع للإنتاج (TurboRepo Build)
 ---
 
 ## 📚 الوثائق
+- [🌟 وثيقة مميزات النظام](./docs/features.md)
 - [دليل المستخدم](./docs/user-guide.md)
 - [دليل المطور](./docs/developer-guide.md)
 - [وثائق النشر](./docs/deployment-guide.md)
 - [توثيق واجهات API (OpenAPI)](./docs/openapi.yaml)
+- [💰 الأسعار والباقات للمطورين والشركات](./docs/pricing.md)
+
+---
+
+## 💎 أسعار النسخ والباقات (Pricing & Tiers)
+1. **نسخة المطورين (Developer Tier):** مجانية (مفتوحة المصدر برخصة MIT) للاستضافة الذاتية والتطوير.
+2. **نسخة الشركات الناشئة (Startup Tier):** **$49 / شهرياً** (حتى 250,000 إرسال شهرياً، طوابير ذكية، ودعم فني).
+3. **نسخة المؤسسات والشركات الكبرى (Enterprise Tier):** **$199 / شهرياً** (دعم فني مخصص 24/7، نطاقات غير محدودة، وموثوقية قصوى).
+4. **نسخة الشركات الكبرى / On-Premise:** مخصصة حسب الطلب.
+*(راجع [دليل الأسعار التفصيلي](./docs/pricing.md) للمزيد من المعلومات).*
 
 ---
 
