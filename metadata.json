@@ -1,0 +1,6 @@
+{
+  "name": "خدمة البريد الإلكتروني المتكاملة - ESP Platform",
+  "description": "خدمة مركزية لإرسال البريد الإلكتروني تدعم جميع تطبيقات المؤسسة عبر API مع نظام طوابير عالي الأداء ولوحة تحكم للمسؤول",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,74 @@
+openapi: 3.0.3
+info:
+  title: Enterprise ESP Platform API
+  description: واجهات برمجة التطبيقات لمنصة البريد الإلكتروني المؤسسية
+  version: 1.0.0
+servers:
+  - url: https://api.email-service.com/api/v1
+    description: بيئة الإنتاج
+  - url: http://localhost:3000/api/v1
+    description: بيئة التطوير المحلية
+paths:
+  /email/send:
+    post:
+      summary: إرسال بريد إلكتروني
+      security:
+        - ApiKeyAuth: []
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - to
+                - subject
+                - templateId
+              properties:
+                to:
+                  type: string
+                  format: email
+                subject:
+                  type: string
+                templateId:
+                  type: string
+                variables:
+                  type: object
+      responses:
+        '200':
+          description: تم إرسال البريد أو إضافته للطابور بنجاح
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  jobId:
+                    type: string
+  /admin/health:
+    get:
+      summary: التحقق من صحة النظام
+      responses:
+        '200':
+          description: النظام يعمل بشكل سليم
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  uptime:
+                    type: number
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

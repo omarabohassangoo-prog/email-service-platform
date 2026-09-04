@@ -1,0 +1,225 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Email Service Platform API Specification (HP-ESP)",
+    "description": "High-Performance Enterprise Email Service Platform REST API supporting transactional emails, Handlebars templates, Bull Queue dispatch, and provider failovers.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Backend Team",
+      "email": "support@esp-platform.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Local Development Server"
+    },
+    {
+      "url": "https://api.esp-platform.com",
+      "description": "Production Cloud Run Server"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "API Key authentication for external SDKs and services (e.g., esp_live_...)"
+      },
+      "BearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT Bearer token authentication for admin endpoints"
+      }
+    },
+    "schemas": {
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": false },
+          "error": { "type": "string", "example": "Invalid API key provided" },
+          "timestamp": { "type": "string", "format": "date-time" }
+        }
+      },
+      "SendEmailRequest": {
+        "type": "object",
+        "required": ["to"],
+        "properties": {
+          "from": { "type": "string", "example": "noreply@platform.com" },
+          "to": {
+            "type": "array",
+            "items": { "type": "string", "format": "email" },
+            "example": ["user@example.com"]
+          },
+          "subject": { "type": "string", "example": "مرحباً بك في المنصة" },
+          "html": { "type": "string", "example": "<h1>أهلاً بك</h1>" },
+          "templateId": { "type": "string", "example": "welcome_email" },
+          "templateData": { "type": "object", "example": { "userName": "أحمد" } },
+          "priority": { "type": "string", "enum": ["low", "normal", "high", "urgent"], "default": "normal" }
+        }
+      },
+      "SendEmailResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "data": {
+            "type": "object",
+            "properties": {
+              "jobId": { "type": "string", "example": "job_1725450000_a1b2c" },
+              "status": { "type": "string", "example": "queued" },
+              "queuePosition": { "type": "integer", "example": 1 }
+            }
+          },
+          "message": { "type": "string", "example": "Email job queued for delivery" }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "summary": "تسجيل دخول المسؤول (Admin Login)",
+        "description": "Authenticates admin credentials and returns JWT tokens",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["username", "password"],
+                "properties": {
+                  "username": { "type": "string", "example": "admin" },
+                  "password": { "type": "string", "example": "Admin@123456" }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": { "description": "Authentication successful" },
+          "401": { "description": "Invalid credentials" }
+        }
+      }
+    },
+    "/api/auth/refresh": {
+      "post": {
+        "summary": "تحديث رمز الوصول (Refresh Token)",
+        "description": "Generates new JWT access token using valid refresh token",
+        "responses": {
+          "200": { "description": "Token refreshed" }
+        }
+      }
+    },
+    "/api/email/send": {
+      "post": {
+        "summary": "إرسال بريد (Send Email)",
+        "security": [{ "ApiKeyAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SendEmailRequest" }
+            }
+          }
+        },
+        "responses": {
+          "202": { "description": "Job queued successfully" },
+          "401": { "description": "Unauthorized" }
+        }
+      }
+    },
+    "/api/email/status/{id}": {
+      "get": {
+        "summary": "حالة البريد (Get Email Status)",
+        "security": [{ "ApiKeyAuth": [] }],
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": { "description": "Status details retrieved" }
+        }
+      }
+    },
+    "/api/email/bulk": {
+      "post": {
+        "summary": "إرسال جماعي (Bulk Send Email)",
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": {
+          "202": { "description": "Bulk batch queued" }
+        }
+      }
+    },
+    "/api/email/schedule": {
+      "post": {
+        "summary": "جدولة بريد (Schedule Email)",
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": {
+          "202": { "description": "Email scheduled for delivery" }
+        }
+      }
+    },
+    "/api/templates": {
+      "get": {
+        "summary": "قائمة القوالب (List Templates)",
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "List of templates" } }
+      },
+      "post": {
+        "summary": "إنشاء قالب (Create Template)",
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "201": { "description": "Template created" } }
+      }
+    },
+    "/api/templates/{id}": {
+      "get": {
+        "summary": "الحصول على قالب (Get Template)",
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "Template details" } }
+      },
+      "put": {
+        "summary": "تحديث قالب (Update Template)",
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "Template updated" } }
+      },
+      "delete": {
+        "summary": "حذف قالب (Delete Template)",
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "Template deleted" } }
+      }
+    },
+    "/api/admin/settings": {
+      "get": {
+        "summary": "إعدادات الخدمة (Get Settings)",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Platform settings" } }
+      },
+      "put": {
+        "summary": "تحديث الإعدادات (Update Settings)",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Settings updated" } }
+      }
+    },
+    "/api/admin/health": {
+      "get": {
+        "summary": "فحص الصحة (System Health)",
+        "responses": { "200": { "description": "System health OK" } }
+      }
+    },
+    "/api/admin/stats": {
+      "get": {
+        "summary": "إحصائيات الخدمة (Service Stats)",
+        "security": [{ "BearerAuth": [] }],
+        "responses": { "200": { "description": "Service statistics" } }
+      }
+    },
+    "/api/sdk/test": {
+      "post": {
+        "summary": "اختبار SDK (Test SDK)",
+        "security": [{ "ApiKeyAuth": [] }],
+        "responses": { "200": { "description": "SDK test echo response" } }
+      }
+    }
+  }
+}
