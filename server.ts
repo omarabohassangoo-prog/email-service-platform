@@ -749,22 +749,28 @@ apiRouter.post('/auth/login', async (req, res) => {
     }
   });
 
-  // Register API router for all path variations (/api/v1, /v1, /api)
+  // Register API router for all path variations (/api/v1, /v1, /api, /)
   app.use('/api/v1', apiRouter);
   app.use('/v1', apiRouter);
   app.use('/api', apiRouter);
   app.use('/api', apiRouterModular);
+  app.use('/', apiRouter);
 
   // Vite Integration and Server Start function
   async function startServer() {
-    if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
-      const { createServer: createViteServer } = await import('vite');
-      const vite = await createViteServer({
-        server: { middlewareMode: true },
-        appType: 'spa',
-      });
-      app.use(vite.middlewares);
-    } else if (!process.env.VERCEL) {
+    const isServerlessEnv = !!process.env.VERCEL || !!process.env.VERCEL_ENV || !!process.env.AWS_LAMBDA_FUNCTION_NAME;
+    if (process.env.NODE_ENV !== 'production' && !isServerlessEnv) {
+      try {
+        const { createServer: createViteServer } = await import('vite');
+        const vite = await createViteServer({
+          server: { middlewareMode: true },
+          appType: 'spa',
+        });
+        app.use(vite.middlewares);
+      } catch (e) {
+        console.warn('Vite dev server middleware skipped:', e);
+      }
+    } else if (!isServerlessEnv) {
       const distPath = path.join(process.cwd(), 'dist');
       app.use(express.static(distPath));
       app.get('*', (req, res) => {
@@ -772,15 +778,17 @@ apiRouter.post('/auth/login', async (req, res) => {
       });
     }
 
-    if (!process.env.VERCEL) {
+    if (!isServerlessEnv) {
       app.listen(PORT, '0.0.0.0', () => {
         console.log(`Enterprise Email Service Platform running at http://0.0.0.0:${PORT}`);
       });
     }
   }
 
+  const isServerless = !!process.env.VERCEL || !!process.env.VERCEL_ENV || !!process.env.AWS_LAMBDA_FUNCTION_NAME || process.env.NODE_ENV === 'test';
+
   // Start standalone server unless in serverless/test environment
-  if (!process.env.VERCEL && process.env.NODE_ENV !== 'test') {
+  if (!isServerless) {
     startServer();
   }
 

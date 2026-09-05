@@ -24,11 +24,20 @@ export const loginUser = createAsyncThunk(
   'auth/loginUser',
   async (formData: { secretKey: string }, { rejectWithValue }) => {
     try {
-      const response = await fetch('/api/v1/auth/login', {
+      let response = await fetch('/api/v1/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ secret_key: formData.secretKey })
       });
+
+      // Fallback route if /api/v1 is not rewritten
+      if (response.status === 404) {
+        response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ secret_key: formData.secretKey })
+        });
+      }
       
       const contentType = response.headers.get('content-type');
       let data: any = {};
@@ -36,7 +45,10 @@ export const loginUser = createAsyncThunk(
         data = await response.json();
       } else {
         const text = await response.text();
-        throw new Error(text && text.length < 200 ? text : 'خطأ في استجابة الخادم (Server error or quota limit reached)');
+        if (text.includes('FUNCTION_INVOCATION_FAILED')) {
+          throw new Error('تعطلت دالة Vercel السحابية (FUNCTION_INVOCATION_FAILED). تم تحديث تكوين vercel.json و api/index.ts لحل هذا التعارض عند إعادة النشر.');
+        }
+        throw new Error(text && text.length < 200 ? text : 'خطأ في استجابة الخادم السحابي');
       }
       
       if (!response.ok || !data.access_token) {

@@ -19,7 +19,10 @@ export class QueueManager {
   };
 
   constructor() {
-    this.startWorkers();
+    // Only start persistent worker loops if not in serverless environment
+    if (!process.env.VERCEL && !process.env.VERCEL_ENV && !process.env.AWS_LAMBDA_FUNCTION_NAME && process.env.NODE_ENV !== 'test') {
+      this.startWorkers();
+    }
   }
 
   public startWorkers() {
