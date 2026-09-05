@@ -1,0 +1,120 @@
+{
+  "entities": {
+    "AdminUser": {
+      "title": "AdminUser",
+      "description": "Enterprise ESP admin accounts and roles",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "username": { "type": "string" },
+        "email": { "type": "string", "format": "email" },
+        "role": { "type": "string", "enum": ["superadmin", "admin", "viewer"] },
+        "is_active": { "type": "boolean" },
+        "created_at": { "type": "string" },
+        "last_login": { "type": "string" }
+      },
+      "required": ["id", "username", "email", "role", "is_active", "created_at"]
+    },
+    "ApiKey": {
+      "title": "ApiKey",
+      "description": "API keys for enterprise microservices integration",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "admin_user_id": { "type": "string" },
+        "key": { "type": "string" },
+        "name": { "type": "string" },
+        "rate_limit": { "type": "number" },
+        "daily_limit": { "type": "number" },
+        "daily_used": { "type": "number" },
+        "is_active": { "type": "boolean" },
+        "created_at": { "type": "string" },
+        "last_used": { "type": "string" }
+      },
+      "required": ["id", "key", "name", "rate_limit", "daily_limit", "is_active", "created_at"]
+    },
+    "EmailTemplate": {
+      "title": "EmailTemplate",
+      "description": "Dynamic email templates with Handlebars engine support",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "subject": { "type": "string" },
+        "body_html": { "type": "string" },
+        "body_text": { "type": "string" },
+        "is_active": { "type": "boolean" },
+        "created_at": { "type": "string" },
+        "updated_at": { "type": "string" }
+      },
+      "required": ["id", "name", "subject", "body_html", "is_active", "created_at"]
+    },
+    "EmailJob": {
+      "title": "EmailJob",
+      "description": "Dispatched email job queued for delivery",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "to": { "type": "string" },
+        "subject": { "type": "string" },
+        "body": { "type": "string" },
+        "priority": { "type": "string", "enum": ["urgent", "high", "normal", "low", "bulk"] },
+        "status": { "type": "string", "enum": ["queued", "processing", "sent", "failed", "dead_letter"] },
+        "retry_count": { "type": "number" },
+        "created_at": { "type": "string" }
+      },
+      "required": ["id", "to", "subject", "priority", "status", "created_at"]
+    },
+    "ProviderConfig": {
+      "title": "ProviderConfig",
+      "description": "SMTP and external email delivery provider configurations",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "type": { "type": "string", "enum": ["smtp", "sendgrid", "mailgun", "postmark", "resend", "ses"] },
+        "is_active": { "type": "boolean" },
+        "weight": { "type": "number" },
+        "success_rate": { "type": "number" }
+      },
+      "required": ["id", "name", "type", "is_active", "weight"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Compliance and security audit logs",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "action": { "type": "string" },
+        "timestamp": { "type": "string" }
+      },
+      "required": ["id", "action", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/admin_users/{userId}": {
+      "schema": "AdminUser",
+      "description": "Admin users collection"
+    },
+    "/api_keys/{keyId}": {
+      "schema": "ApiKey",
+      "description": "Enterprise API keys"
+    },
+    "/email_templates/{templateId}": {
+      "schema": "EmailTemplate",
+      "description": "Dynamic email templates collection"
+    },
+    "/email_jobs/{jobId}": {
+      "schema": "EmailJob",
+      "description": "Email queue jobs and delivery status"
+    },
+    "/provider_configs/{providerId}": {
+      "schema": "ProviderConfig",
+      "description": "Email delivery providers"
+    },
+    "/audit_logs/{logId}": {
+      "schema": "AuditLog",
+      "description": "System audit trail logs"
+    }
+  }
+}

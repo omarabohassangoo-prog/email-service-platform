@@ -2,6 +2,7 @@ import {
   AdminUser, ApiKey, EmailJob, EmailTemplate, EmailEvent, 
   ProviderConfig, AuditLog, QueueMetrics, ScheduledTask
 } from '../types';
+import { firestoreService } from '../services/firestore.service';
 
 // In-memory persistent state initialized with enterprise production data
 
@@ -506,6 +507,7 @@ class DatabaseStore {
     };
     this.apiKeys.unshift(newKey);
     this.addAuditLog('api_key.create', { key_id: newKey.id, name: newKey.name });
+    firestoreService.saveApiKey(newKey).catch(() => {});
     return newKey;
   }
   toggleApiKey(id: string) {
@@ -513,12 +515,14 @@ class DatabaseStore {
     if (k) {
       k.is_active = !k.is_active;
       this.addAuditLog('api_key.toggle', { key_id: id, is_active: k.is_active });
+      firestoreService.saveApiKey(k).catch(() => {});
     }
     return k;
   }
   deleteApiKey(id: string) {
     this.apiKeys = this.apiKeys.filter(k => k.id !== id);
     this.addAuditLog('api_key.delete', { key_id: id });
+    firestoreService.deleteApiKey(id).catch(() => {});
     return true;
   }
 
@@ -543,6 +547,7 @@ class DatabaseStore {
     };
     this.templates.unshift(tmpl);
     this.addAuditLog('template.create', { template_id: tmpl.id, name: tmpl.name });
+    firestoreService.saveTemplate(tmpl).catch(() => {});
     return tmpl;
   }
   updateTemplate(id: string, data: Partial<EmailTemplate>) {
@@ -550,6 +555,7 @@ class DatabaseStore {
     if (tmpl) {
       Object.assign(tmpl, data, { version: tmpl.version + 1, updated_at: new Date().toISOString() });
       this.addAuditLog('template.update', { template_id: tmpl.id, version: tmpl.version });
+      firestoreService.saveTemplate(tmpl).catch(() => {});
     }
     return tmpl;
   }
@@ -580,12 +586,14 @@ class DatabaseStore {
   addJob(job: EmailJob) {
     this.jobs.unshift(job);
     if (this.jobs.length > 2000) this.jobs.pop();
+    firestoreService.saveEmailJob(job).catch(() => {});
     return job;
   }
   updateJob(jobId: string, updates: Partial<EmailJob>) {
     const job = this.jobs.find(j => j.id === jobId || j.job_id === jobId);
     if (job) {
       Object.assign(job, updates, { updated_at: new Date().toISOString() });
+      firestoreService.saveEmailJob(job).catch(() => {});
     }
     return job;
   }
@@ -604,7 +612,7 @@ class DatabaseStore {
   // Audit Logs
   getAuditLogs(limit = 100) { return this.auditLogs.slice(0, limit); }
   addAuditLog(action: string, details?: Record<string, any>, admin_user_id = 'admin-001', api_key_id?: string) {
-    this.auditLogs.unshift({
+    const log: AuditLog = {
       id: `audit-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
       admin_user_id,
       api_key_id,
@@ -612,7 +620,9 @@ class DatabaseStore {
       details,
       ip_address: '127.0.0.1',
       created_at: new Date().toISOString()
-    });
+    };
+    this.auditLogs.unshift(log);
+    firestoreService.saveAuditLog(log).catch(() => {});
   }
 
   // Stats & System Metrics
