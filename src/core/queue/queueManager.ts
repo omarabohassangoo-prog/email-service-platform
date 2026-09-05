@@ -28,6 +28,9 @@ export class QueueManager {
     this.workerInterval = setInterval(() => {
       this.processQueue();
     }, 100);
+    if (this.workerInterval && typeof (this.workerInterval as any).unref === 'function') {
+      (this.workerInterval as any).unref();
+    }
   }
 
   public stopWorkers() {

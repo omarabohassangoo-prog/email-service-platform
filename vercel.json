@@ -3,7 +3,7 @@
   "name": "enterprise-esp-platform",
   "builds": [
     {
-      "src": "server.ts",
+      "src": "api/index.ts",
       "use": "@vercel/node",
       "config": {
         "maxDuration": 60
@@ -20,7 +20,11 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "server.ts"
+      "dest": "/api/index.ts"
+    },
+    {
+      "src": "/api",
+      "dest": "/api/index.ts"
     },
     {
       "handle": "filesystem"

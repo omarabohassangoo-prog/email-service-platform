@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
   LayoutDashboard, Layers, FileCode2, Key, Server, Terminal, Send, 
-  BarChart3, ShieldAlert, LogIn, LogOut, Activity, Zap, CheckCircle2, PauseCircle, Library, Flame, Cloud, Rocket, HardDrive, Database, FolderTree, Boxes, Network, Layout, Calendar
+  BarChart3, ShieldAlert, LogIn, LogOut, Activity, Zap, CheckCircle2, PauseCircle, Library, Flame, Cloud, Rocket, HardDrive, Database, FolderTree, Boxes, Network, Layout, Calendar, ShieldCheck
 } from 'lucide-react';
 import { SystemHealth, QueueMetrics } from '../types';
 
@@ -26,6 +26,7 @@ export const Navigation: React.FC<NavigationProps> = ({
 }) => {
   const navItems = [
     { id: 'dashboard', label: 'لوحة التحكم والعمليات', icon: LayoutDashboard },
+    { id: 'readiness', label: 'شروط التحقق والجاهزية للنشر (QA-READY)', icon: ShieldCheck },
     { id: 'queue', label: 'مراقبة الطوابير (Bull Queue)', icon: Layers, badge: queueMetrics?.waiting || 0 },
     { id: 'templates', label: 'قوالب البريد الإلكتروني', icon: FileCode2 },
     { id: 'api-keys', label: 'مفاتيح API والأمان', icon: Key },

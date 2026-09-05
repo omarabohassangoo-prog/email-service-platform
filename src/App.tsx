@@ -24,6 +24,7 @@ import { ApiRoutesDesignView } from './components/ApiRoutesDesignView';
 import { FrontendArchitectureView } from './components/FrontendArchitectureView';
 import { RiskAnalysisView } from './components/RiskAnalysisView';
 import { AuditLogsView } from './components/AuditLogsView';
+import { ProductionReadinessView } from './components/ProductionReadinessView';
 
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from './store';
@@ -265,6 +266,10 @@ export function App() {
             onRefresh={fetchData}
             onNavigateTab={setActiveTab}
           />
+        )}
+
+        {activeTab === 'readiness' && (
+          <ProductionReadinessView />
         )}
 
         {activeTab === 'queue' && (
