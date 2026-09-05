@@ -30,7 +30,14 @@ export const loginUser = createAsyncThunk(
         body: JSON.stringify({ secret_key: formData.secretKey })
       });
       
-      const data = await response.json();
+      const contentType = response.headers.get('content-type');
+      let data: any = {};
+      if (contentType && contentType.includes('application/json')) {
+        data = await response.json();
+      } else {
+        const text = await response.text();
+        throw new Error(text && text.length < 200 ? text : 'خطأ في استجابة الخادم (Server error or quota limit reached)');
+      }
       
       if (!response.ok || !data.access_token) {
         return rejectWithValue(data.message || 'المفتاح السري غير صحيح');
