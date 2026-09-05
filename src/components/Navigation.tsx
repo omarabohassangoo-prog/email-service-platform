@@ -32,6 +32,7 @@ export const Navigation: React.FC<NavigationProps> = ({
     { id: 'api-keys', label: 'مفاتيح API والأمان', icon: Key },
     { id: 'providers', label: 'مزودات الخدمة (Failover)', icon: Server },
     { id: 'schedules', label: 'جدولة البريد والمهام (Scheduling)', icon: Calendar },
+    { id: 'sdk', label: 'مكتبة ومختبر الـ SDK (@email-service/sdk)', icon: Terminal },
     { id: 'performance', label: 'إجهاد والأداء (HP-ESP)', icon: Flame },
     { id: 'deliverability', label: 'معايير التسليم وتجنب الحظر (DLV-ESP)', icon: Zap },
     { id: 'vercel', label: 'استضافة Vercel وحجم الملفات (VER-ESP)', icon: Cloud },

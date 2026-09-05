@@ -1,17 +1,9 @@
 import { apiClient } from './apiClient';
 
 export interface SdkTestPayload {
-  action: 'send' | 'status' | 'template';
+  action: 'send' | 'status' | 'template' | 'bulk' | 'schedule' | 'ping';
   apiKey: string;
-  params: {
-    to?: string;
-    subject?: string;
-    html?: string;
-    priority?: string;
-    job_id?: string;
-    template_id?: string;
-    data?: Record<string, any>;
-  };
+  params: Record<string, any>;
 }
 
 export const sdkService = {
