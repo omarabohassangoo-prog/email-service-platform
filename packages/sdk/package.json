@@ -1,0 +1,48 @@
+{
+  "name": "@email-service/sdk",
+  "version": "1.0.0",
+  "description": "Enterprise-grade TypeScript SDK for the High-Performance Centralized Email Service Platform",
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md",
+    "CHANGELOG.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "lint": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm run test"
+  },
+  "keywords": [
+    "email",
+    "esp",
+    "sdk",
+    "typescript",
+    "bull-queue",
+    "transactional-email",
+    "bulk-email",
+    "templates"
+  ],
+  "author": "Enterprise Email Platform Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.14.0",
+    "typescript": "~5.8.2",
+    "vitest": "^5.0.0"
+  }
+}
